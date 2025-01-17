@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from yeagerai.toolkit.yeagerai_tool import YeagerAITool
 
-from langchain.chat_models import ChatOpenAI
+from groq.api import GroqChatModel  # Replace with the actual import path for Groq API
 from langchain import PromptTemplate, LLMChain
 from langchain.prompts.chat import (
     ChatPromptTemplate,
@@ -33,12 +33,12 @@ class LoadNFixNewToolAPIWrapper(BaseModel):
         # try to load the file
         try:
             with open(
-                new_tool_path.strip(")").strip('"').strip(" ").strip("\n"), "r"
+                new_tool_path.strip(")").strip('"').strip(" ").strip("\\n"), "r"
             ) as f:
                 source_code = f.read()
                 f.close()
         except FileNotFoundError as traceback:
-            return f"Error: The provided path is not correct. Please try again.\n Traceback: {traceback}"
+            return f"Error: The provided path is not correct. Please try again.\\n Traceback: {traceback}"
 
         class_name = new_tool_path.split("/")[-1].split(".")[0]
 
@@ -53,9 +53,9 @@ class LoadNFixNewToolAPIWrapper(BaseModel):
             self.toolkit.register_tool(class_run(api_wrapper=class_api_wrapper()))
 
         except Exception as traceback:
-            # Initialize ChatOpenAI with API key and model name
-            chat = ChatOpenAI(
-                openai_api_key=self.openai_api_key,
+            # Initialize GroqChatModel with API key and model name
+            chat = GroqChatModel(
+                api_key=self.openai_api_key,
                 model_name=self.model_name,
                 request_timeout=self.request_timeout,
             )
@@ -96,14 +96,14 @@ class LoadNFixNewToolAPIWrapper(BaseModel):
                     f.write(code)
                     f.close()
 
-                return f"The file {class_name}.py has been improved but it was not loaded into the toolkit.\n Traceback: {traceback}"
+                return f"The file {class_name}.py has been improved but it was not loaded into the toolkit.\\n Traceback: {traceback}"
             else:
                 # Write the {class_name}.py file inside the user-defined session_path
                 output_file = f"{class_name}.py"
                 with open(os.path.join(self.session_path, output_file), "w") as f:
                     f.write(out)
                     f.close()
-                return f"The file {class_name}.py has been improved but it was not loaded into the toolkit.\n Traceback: {traceback}"
+                return f"The file {class_name}.py has been improved but it was not loaded into the toolkit.\\n Traceback: {traceback}"
 
         return f"The {class_name} tool has been loaded into your toolkit, Now you can use it as any other tool."
 

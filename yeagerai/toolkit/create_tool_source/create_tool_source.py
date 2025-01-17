@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from yeagerai.toolkit.yeagerai_tool import YeagerAITool
 
-from langchain.chat_models import ChatOpenAI
+from groq.api import GroqChatModel  # Replace with the actual import path for Groq API
 from langchain import PromptTemplate, LLMChain
 from langchain.prompts.chat import (
     ChatPromptTemplate,
@@ -34,9 +34,9 @@ class CreateToolSourceAPIWrapper(BaseModel):
             )[1]
         except IndexError:
             return "You have not provided the split token ######SPLIT_TOKEN########, retry it providing it between the solution sketch and the tool tests."
-        # Initialize ChatOpenAI with API key and model name
-        chat = ChatOpenAI(
-            openai_api_key=self.openai_api_key,
+        # Initialize GroqChatModel with API key and model name
+        chat = GroqChatModel(
+            api_key=self.openai_api_key,
             model_name=self.model_name,
             request_timeout=self.request_timeout,
         )
@@ -81,7 +81,7 @@ class CreateToolSourceAPIWrapper(BaseModel):
                     f.write(code)
                     f.close()
 
-                return f"The file {class_name}.py has been written in the {self.session_path} successfully!\nHere is the source code of the {class_name} LangChain tool based on given requirements:\n{code}"
+                return f"The file {class_name}.py has been written in the {self.session_path} successfully!\\nHere is the source code of the {class_name} LangChain tool based on given requirements:\\n{code}"
 
         return "Error: No code block found or class name could not be extracted."
 

@@ -32,21 +32,21 @@ def pre_load():
     root_path = os.path.join(home_path, ".yeagerai-sessions")
     os.makedirs(root_path, exist_ok=True)
 
-    # Checking OPENAI_API_KEY
+    # Checking GROQ_API_KEY
     env_path = os.path.join(root_path, ".env")
     if not os.path.exists(env_path):
         with open(env_path, "w") as f:
-            f.write(f"OPENAI_API_KEY=1234")
+            f.write(f"GROQ_API_KEY=1234")
         has_api_key = False
         print(
-            "Please modify the .env file inside ~/.yeagerai-sessions/.env and add your OpenAI API key... "
+            "Please modify the .env file inside ~/.yeagerai-sessions/.env and add your Groq API key... "
         )
 
     load_dotenv(dotenv_path=env_path)
-    openai_api_key = os.getenv("OPENAI_API_KEY")
-    if not openai_api_key:
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    if not groq_api_key:
         print(
-            "Please modify the .env file inside ~/.yeagerai-sessions/.env and add your OpenAI API key... "
+            "Please modify the .env file inside ~/.yeagerai-sessions/.env and add your Groq API key... "
         )
         has_api_key = False
 
@@ -87,7 +87,7 @@ def chat_interface(
 ):
     while True:
         try:
-            prompt_text = input("\n\nEnter your prompt (Type :q to quit):\n\n> ")
+            prompt_text = input("\\n\\nEnter your prompt (Type :q to quit):\\n\\n> ")
             if prompt_text == ":q":
                 break
 
@@ -176,7 +176,7 @@ def main():
         ),
     )
 
-    click.echo(click.style("Welcome to the @yeager.ai CLI!\n", fg="green", bold=True))
+    click.echo(click.style("Welcome to the @yeager.ai CLI!\\n", fg="green", bold=True))
     click.echo(click.style("Loading The @yeager.ai Agent Interface...", fg="green"))
     chat_interface(
         username,
