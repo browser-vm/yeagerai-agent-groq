@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from yeagerai.toolkit.yeagerai_tool import YeagerAITool
 
-from langchain.chat_models import ChatOpenAI
+from groq.api import GroqChatModel  # Replace with the actual import path for Groq API
 from langchain.llms import OpenAI
 from langchain import PromptTemplate, LLMChain
 from langchain.prompts.chat import (
@@ -25,9 +25,9 @@ class CreateToolMockedTestsAPIWrapper(BaseModel):
     openai_api_key: str = os.getenv("OPENAI_API_KEY")
 
     def run(self, solution_sketch: str) -> str:
-        # Initialize ChatOpenAI with API key and model name
-        chat = ChatOpenAI(
-            openai_api_key=self.openai_api_key,
+        # Initialize GroqChatModel with API key and model name
+        chat = GroqChatModel(
+            api_key=self.openai_api_key,
             model_name=self.model_name,
             request_timeout=self.request_timeout,
         )
@@ -49,8 +49,8 @@ class CreateToolMockedTestsAPIWrapper(BaseModel):
         # Extract the name of the class from the code block
         quick_llm = OpenAI(temperature=0)
         class_name = quick_llm(
-            f"Which is the name of the class that is being tested here? Return only the class_name value like a python string, without any other explanation \n {out}"
-        ).replace("\n", "")
+            f"Which is the name of the class that is being tested here? Return only the class_name value like a python string, without any other explanation \\n {out}"
+        ).replace("\\n", "")
 
         # Parse the Python block inside the output, handling different code block formats
         code_block_pattern = re.compile(r"(```.*?```)", re.DOTALL)
@@ -72,7 +72,7 @@ class CreateToolMockedTestsAPIWrapper(BaseModel):
                 f.write(code)
                 f.close()
 
-            return f"The file test_{class_name}.py has been written in the {self.session_path} successfully!\nHere is the source code of the {class_name} LangChain tool based on given requirements:\n{code}"
+            return f"The file test_{class_name}.py has been written in the {self.session_path} successfully!\\nHere is the source code of the {class_name} LangChain tool based on given requirements:\\n{code}"
 
         return "Error: No code block found or class name could not be extracted."
 

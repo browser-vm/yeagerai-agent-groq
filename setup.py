@@ -9,7 +9,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "langchain==0.0.135",
-        "openai",
+        "groq-api==1.0.0",  # Replace with the actual Groq API package name and version
         "GitPython",
         "click",
         "python-dotenv",

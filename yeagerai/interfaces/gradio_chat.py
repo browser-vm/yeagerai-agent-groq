@@ -32,25 +32,25 @@ def pre_load():
     root_path = os.path.join(home_path, ".yeagerai-sessions")
     os.makedirs(root_path, exist_ok=True)
 
-    # Checking OPENAI_API_KEY
+    # Checking GROQ_API_KEY
     env_path = os.path.join(root_path, ".env")
     if not os.path.exists(env_path):
         with open(env_path, "w") as f:
-            f.write(f"OPENAI_API_KEY=1234")
+            f.write(f"GROQ_API_KEY=1234")
         has_api_key = False
         print(
-            "Please modify the .env file inside ~/.yeagerai-sessions/.env and add your OpenAI API key... "
+            "Please modify the .env file inside ~/.yeagerai-sessions/.env and add your Groq API key... "
         )
 
     load_dotenv(dotenv_path=env_path)
-    openai_api_key = os.getenv("OPENAI_API_KEY")
-    if not openai_api_key:
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    if not groq_api_key:
         print(
-            "Please modify the .env file inside ~/.yeagerai-sessions/.env and add your OpenAI API key... "
+            "Please modify the .env file inside ~/.yeagerai-sessions/.env and add your Groq API key... "
         )
         has_api_key = False
 
-    return has_api_key, openai_api_key, username, env_path, root_path
+    return has_api_key, groq_api_key, username, env_path, root_path
 
 
 def set_session_variables(username, model_name, request_timeout, root_path, session_id):
@@ -108,7 +108,7 @@ def set_session_variables(username, model_name, request_timeout, root_path, sess
 
 
 def load_state():
-    has_api_key, openai_api_key, username, env_path, root_path = pre_load()
+    has_api_key, groq_api_key, username, env_path, root_path = pre_load()
     session_id = str(uuid.uuid1())[:7] + "-" + username
     session_path = os.path.join(root_path, session_id)
     model_name = "gpt-4"
@@ -118,7 +118,7 @@ def load_state():
     )
     return {
         "has_api_key": has_api_key,
-        "openai_api_key": openai_api_key,
+        "groq_api_key": groq_api_key,
         "username": username,
         "env_path": env_path,
         "root_path": root_path,
@@ -133,15 +133,15 @@ def load_state():
 
 
 def update_state_from_settings(
-    session_id, model_name, request_timeout, openai_api_key, session_data
+    session_id, model_name, request_timeout, groq_api_key, session_data
 ):
     session_data["session_id"] = session_id
     session_data["model_name"] = model_name
     session_data["request_timeout"] = request_timeout
-    if openai_api_key != session_data["openai_api_key"]:
-        session_data["openai_api_key"] = openai_api_key
+    if groq_api_key != session_data["groq_api_key"]:
+        session_data["groq_api_key"] = groq_api_key
         with open(session_data.value["env_path"], "w") as f:
-            f.write(f"OPENAI_API_KEY={openai_api_key}")
+            f.write(f"GROQ_API_KEY={groq_api_key}")
     return session_data
 
 
@@ -204,7 +204,7 @@ def main():
         with gr.Tab("Settings"):
             gr.Markdown(
                 """
-            **IMPORTANT:** If this is your first time using the yAgents, you should paste your OpenAI API key in the API Key field and click Submit. You can also change the model name and request timeout.
+            **IMPORTANT:** If this is your first time using the yAgents, you should paste your Groq API key in the API Key field and click Submit. You can also change the model name and request timeout.
             GPT-4 is highly recommended.
             """
             )
@@ -230,7 +230,7 @@ def main():
                 label="API Key",
                 name="api_key",
                 type="password",
-                value=session_data.value["openai_api_key"],
+                value=session_data.value["groq_api_key"],
             )
             submit_settings_button = gr.Button(
                 "Update",

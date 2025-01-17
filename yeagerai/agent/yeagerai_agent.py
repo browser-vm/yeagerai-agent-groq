@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from langchain import LLMChain
 from langchain.agents import AgentExecutor, LLMSingleActionAgent
-from langchain.chat_models import ChatOpenAI
+from groq.api import GroqChatModel  # Replace with the actual import path for Groq API
 from langchain.callbacks import CallbackManager
 
 from yeagerai.toolkit import YeagerAIToolkit
@@ -48,7 +48,7 @@ class YeagerAIAgent:
         )
 
         self.llm_chain = LLMChain(
-            llm=ChatOpenAI(
+            llm=GroqChatModel(
                 temperature=0.2,
                 model_name=self.model_name,
                 request_timeout=self.request_timeout,
@@ -65,7 +65,7 @@ class YeagerAIAgent:
         self.agent = LLMSingleActionAgent(
             llm_chain=self.llm_chain,
             output_parser=self.output_parser,
-            stop=["\nObservation:"],
+            stop=["\\nObservation:"],
             allowed_tools=tool_names,
         )
         self.agent_executor = AgentExecutor.from_agent_and_tools(
